@@ -52,25 +52,32 @@ class PriceAnalyzer:
 
     # Метод для взаимодействия с пользователем
     def start_console_interface(self):
-        while True:
-            search_text = input("\nВведите название товара для поиска (или 'exit' | 'выход' для выхода): ")
-            if search_text.lower() == 'exit' or search_text.lower() == 'выход':
-                print("Работа завершена.")
-                break
-            else:
-                results = self.find_text(search_text)
-                if not results.empty:
-                    # Выводим данные в консоль в табличной форме
-                    print(tabulate(results, headers='keys', showindex=True, tablefmt='grid'))
-                else:
+            while True:
+                try:
+                    search_text = input("\nВведите название товара для поиска (или 'exit' | 'выход' для выхода): ")
+                    if search_text.lower() == 'exit' or search_text.lower() == 'выход':
+                        print("Работа завершена.")
+                        break
+                    else:
+                        results = self.find_text(search_text)
+                        if not results.empty:
+                            # Выводим данные в консоль в табличной форме
+                            print(tabulate(results, headers='keys', showindex=True, tablefmt='grid'))
+                        else:
+                            print("Ничего не найдено.")
+                except:
                     print("Ничего не найдено.")
+
+                    # После выхода спрашиваем, нужен ли экспорт
+            export_choice = input("Нужен ли экспорт данных в HTML файл? (да/нет): ").strip().lower()
+            if export_choice == 'да':
+                output_file = input(
+                            "Введите имя файла для экспорта (по умолчанию 'prices.html'): ").strip() or "prices.html"
+                self.export_to_html(output_file)
+                print("Программа завершила работу.")
+
         
-        # После выхода спрашиваем, нужен ли экспорт
-        export_choice = input("Нужен ли экспорт данных в HTML файл? (да/нет): ").strip().lower()
-        if export_choice == 'да':
-            output_file = input("Введите имя файла для экспорта (по умолчанию 'prices.html'): ").strip() or "prices.html"
-            self.export_to_html(output_file)
-        print("Программа завершила работу.")
+
 
 
 # Использование класса
