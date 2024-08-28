@@ -36,8 +36,18 @@ class PriceAnalyzer:
                 self.data = pd.concat([self.data, df_filtered], ignore_index=True)
 
     # Метод для экспорта данных в HTML файл
-    def export_to_html(self, output_file="prices.html"):
-        html_content = self.data.to_html(index=False)
+    def export_to_html(self, data_to_export, output_file="prices.html"):
+        html_content = f"""
+            <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Результаты поиска цен</title>
+                </head>
+                <body>
+                    {data_to_export.to_html(index=False)}
+                </body>
+            </html>
+        """
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(html_content)
         print(f"Данные экспортированы в файл: {output_file}")
@@ -52,6 +62,7 @@ class PriceAnalyzer:
 
     # Метод для взаимодействия с пользователем
     def start_console_interface(self):
+        results = None
         while True:
             search_text = input("\nВведите название товара для поиска (или 'exit' | 'выход' для выхода): ")
             if search_text.lower() == 'exit' or search_text.lower() == 'выход':
@@ -68,8 +79,11 @@ class PriceAnalyzer:
         # После выхода спрашиваем, нужен ли экспорт
         export_choice = input("Нужен ли экспорт данных в HTML файл? (да/нет): ").strip().lower()
         if export_choice == 'да':
-            output_file = input("Введите имя файла для экспорта (по умолчанию 'prices.html'): ").strip() or "prices.html"
-            self.export_to_html(output_file)
+            if results is None or results.empty:
+                print("Нет данных для экспорта")
+            else:
+                output_file = input("Введите имя файла для экспорта (по умолчанию 'prices.html'): ").strip() or "prices.html"
+                self.export_to_html(results, output_file)
         print("Программа завершила работу.")
 
 
